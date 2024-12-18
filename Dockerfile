@@ -4,10 +4,11 @@ ARG CODENAME=alpine
 
 ARG SOURCE_DIR=/home/jenkins
 
-FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-${CODENAME} AS base
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-${CODENAME} AS base
 
 FROM base AS builder
 
+ARG TARGETARCH
 ARG SOURCE_DIR
 
 WORKDIR "$SOURCE_DIR"
