@@ -18,30 +18,30 @@ public class TodoService
         databaseSettings.Value.ConnectionString);
   }
 
-  public async Task<IEnumerable<TodoItem>> Get() =>
-      await _connection.QueryAsync<TodoItem>("select * from users");
+  public async Task<IEnumerable<TodoItem>> GetTodo(int id) =>
+      await _connection.QueryAsync<TodoItem>("SELECT * FROM TodoItem WHERE userId = @userId", new { userId = id });
 
   public async Task<TodoItem?> Get(string id)
   {
-    var sql = "SELECT * FROM Users WHERE userId = @userId";
+    var sql = "SELECT * FROM TodoItem WHERE todoItemId = @userId";
     return await _connection.QueryFirstOrDefaultAsync(sql, new { userId = id });
   }
 
-  public async Task Create(TodoItem newUser)
+  public async Task Create(TodoItem item)
   {
-    var sql = "INSERT INTO Users (Name, Email) VALUES (@Name, @Email)";
-    await _connection.ExecuteAsync(sql, newUser);
+    var sql = "INSERT INTO TodoItem (Text, Description) VALUES (@Text, @Description)";
+    await _connection.ExecuteAsync(sql, item);
   }
 
-  public async Task Update(TodoItem updatedUser)
+  public async Task Update(TodoItem item)
   {
-    var sql = "UPDATE Users SET (Name = @Name, Email = @Email)  WHERE Id = @Id";
-    await _connection.ExecuteAsync(sql, updatedUser);
+    var sql = "UPDATE TodoItem SET (Text = @Text, Description = @Description)  WHERE Id = @Id";
+    await _connection.ExecuteAsync(sql, item);
   }
 
   public async Task Remove(string id)
   {
-    var sql = "DELETE FROM Users WHERE Id = @Id";
+    var sql = "DELETE FROM TodoItem WHERE Id = @Id";
     await _connection.ExecuteAsync(sql, new { ID = id });
   }
 }
