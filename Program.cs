@@ -4,10 +4,10 @@ using TodoApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel((context, serverOptions) =>
-{
-    serverOptions.Listen(IPAddress.Any, 80);
-});
+// builder.WebHost.ConfigureKestrel((context, serverOptions) =>
+// {
+//     serverOptions.Listen(IPAddress.Any, 80);
+// });
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
