@@ -8,16 +8,15 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-${
 
 FROM base AS builder
 
-ARG TARGETARCH
 ARG SOURCE_DIR
 
 WORKDIR "$SOURCE_DIR"
 
 COPY --link *.csproj .
-RUN dotnet restore -a $TARGETARCH
+RUN dotnet restore
 
 COPY . .
-RUN dotnet publish -a $TARGETARCH --no-restore -o /app
+RUN dotnet publish --no-restore -o /app
 
 FROM builder AS test
 
@@ -35,4 +34,4 @@ WORKDIR /app
 COPY --link --from=builder /app .
 USER $APP_UID
 
-ENTRYPOINT ["./dotnetapp"]
+ENTRYPOINT ["./bin/Release/net9.0/publish/TodoApi"]
