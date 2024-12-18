@@ -27,7 +27,7 @@ WORKDIR "$SOURCE_DIR"
 
 RUN pnpm run test
 
-FROM mcr.microsoft.com/dotnet/runtime:9.0-alpine
+FROM mcr.microsoft.com/dotnet/runtime:9.0-alpine as runtime
 
 ARG SOURCE_DIR
 
