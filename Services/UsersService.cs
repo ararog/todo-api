@@ -7,7 +7,7 @@ using TodoApi.Models;
 
 namespace TodoApi.Services;
 
-public class UsersService
+public class UsersService : IApiService<User>
 {
     IDbConnection _connection;
 
@@ -18,8 +18,13 @@ public class UsersService
             databaseSettings.Value.ConnectionString);
     }
 
-    public async Task<IEnumerable<User>> Get() =>
-        await _connection.QueryAsync<User>("select * from users");
+    public async Task<IEnumerable<User>> GetAll() =>
+      await _connection.QueryAsync<User>("SELECT * FROM User");
+
+    public Task<IEnumerable<User>> GetAll(int id)
+    {
+        throw new NotImplementedException();
+    }
 
     public async Task<User?> Get(string id)
     {

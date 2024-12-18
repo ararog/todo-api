@@ -26,7 +26,7 @@ public class TodoController : ControllerBase
   {
     int id = int.Parse(ClaimTypes.NameIdentifier);
     _logger.LogDebug("Loading todo item");
-    return await _todoService.GetTodo(id);
+    return await _todoService.GetAll(id);
   }
 
   [Authorize(Roles = "Admin,User")]
