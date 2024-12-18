@@ -28,8 +28,6 @@ RUN pnpm run test
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
 
-EXPOSE 80
-
 ARG SOURCE_DIR
 
 WORKDIR /app
