@@ -35,3 +35,4 @@ COPY --link --from=builder /app .
 USER $APP_UID
 
 #ENTRYPOINT ["./bin/Release/net9.0/publish/TodoApi"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
