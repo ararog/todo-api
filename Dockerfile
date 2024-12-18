@@ -27,12 +27,12 @@ WORKDIR "$SOURCE_DIR"
 
 RUN pnpm run test
 
-FROM mcr.microsoft.com/dotnet/runtime:9.0-alpine as runtime
+FROM mcr.microsoft.com/dotnet/runtime:9.0-alpine AS runtime
 
 ARG SOURCE_DIR
 
 WORKDIR /app
-COPY --link --from=build /app .
+COPY --link --from=builder /app .
 USER $APP_UID
 
 ENTRYPOINT ["./dotnetapp"]
