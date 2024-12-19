@@ -4,5 +4,5 @@ metadata:
   name: todo-api-config
   namespace: default
 data:
-  DB_HOST: ""
+  DB_HOST: "kube.local"
   DB_USER: "postgres"

@@ -14,11 +14,7 @@ public class TodoService : IApiService<TodoItem>
   public TodoService(
       IOptions<DatabaseSettings> databaseSettings)
   {
-    _connection = new NpgsqlConnection(
-        string.Format(databaseSettings.Value.ConnectionString,
-        Environment.GetEnvironmentVariable("DB_NAME"),
-        Environment.GetEnvironmentVariable("DB_USER"),
-        Environment.GetEnvironmentVariable("DB_PASSWORD")));
+    _connection = new NpgsqlConnection(databaseSettings.Value.FormatConnectionString());
   }
 
   public Task<IEnumerable<TodoItem>> GetAll() =>

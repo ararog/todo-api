@@ -15,7 +15,7 @@ public class UsersService : IApiService<User>
         IOptions<DatabaseSettings> databaseSettings)
     {
         _connection = new NpgsqlConnection(
-            databaseSettings.Value.ConnectionString);
+            databaseSettings.Value.FormatConnectionString());
     }
 
     public async Task<IEnumerable<User>> GetAll() =>
