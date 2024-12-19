@@ -6,7 +6,7 @@ using UsersService.Models;
 namespace TodoApi.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
   private readonly ILogger<UsersController> _logger;
@@ -24,7 +24,7 @@ public class UsersController : ControllerBase
   public async Task<IEnumerable<User>> Get()
   {
     _logger.LogDebug("Loading users");
-    return await _usersService.Get();
+    return await _usersService.GetAll();
   }
 
   [Authorize(Roles = "Admin")]

@@ -7,7 +7,7 @@ using UsersService.Models;
 namespace TodoApi.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class TodoController : ControllerBase
 {
   private readonly ILogger<UsersController> _logger;

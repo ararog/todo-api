@@ -32,6 +32,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
 });
 
+builder.Configuration.AddEnvironmentVariables();
+
 builder.Services.Configure<DatabaseSettings>(
     builder.Configuration.GetSection("Database"));
 
