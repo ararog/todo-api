@@ -37,8 +37,17 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.Configure<DatabaseSettings>(
     builder.Configuration.GetSection("Database"));
 
+builder.Services.AddSingleton<TodoApi.Utils.DapperContext>();
+builder.Services.AddSingleton<TodoApi.Utils.Database>();
 builder.Services.AddSingleton<TodoApi.Services.UsersService>();
 builder.Services.AddSingleton<TodoApi.Services.TodoService>();
+
+builder.Services.AddSingleton<TodoApi.Services.TodoService>();
+    .AddLogging(c => c.AddFluentMigratorConsole())
+        .AddFluentMigratorCore()
+        .ConfigureRunner(c => c.AddSqlServer2012()
+            .WithGlobalConnectionString(Configuration.GetConnectionString("SqlConnection"))
+            .ScanIn(Assembly.GetExecutingAssembly()).For.Migrations());
 
 var app = builder.Build();
 
@@ -49,5 +58,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MigrateDatabase();
 
 app.Run();
