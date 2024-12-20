@@ -45,7 +45,7 @@ builder.Services.AddSingleton<TodoApi.Services.UsersService>();
 builder.Services.AddSingleton<TodoApi.Services.TodoService>();
 builder.Services.AddLogging(c => c.AddFluentMigratorConsole())
         .AddFluentMigratorCore()
-        .ConfigureRunner(c => c.AddSqlServer2012()
+        .ConfigureRunner(c => c.AddPostgres()
             .WithGlobalConnectionString(
                 string.Format(
                     builder.Configuration.GetSection("Database").GetValue<string>("MasterConnectionString"),

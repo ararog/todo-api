@@ -1,3 +1,5 @@
+using FluentMigrator.Runner;
+
 public static class MigrationManager
 {
     public static IHost MigrateDatabase(this IHost host)
@@ -5,10 +7,14 @@ public static class MigrationManager
         using (var scope = host.Services.CreateScope())
         {
             var databaseService = scope.ServiceProvider.GetRequiredService<TodoApi.Utils.Database>();
+            var migrationService = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
 
             try
             {
-                databaseService.CreateDatabase("Todo");
+                databaseService.CreateDatabase("todo");
+
+                migrationService.ListMigrations();
+                migrationService.MigrateUp();
             }
             catch
             {
