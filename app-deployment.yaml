@@ -18,7 +18,7 @@ spec:
       - name: todo-api-container
         image: registry.local:5000/training/todo-api:latest
         env:
-          - name: DB_URL
+          - name: DB_HOST
             valueFrom:
               configMapKeyRef:
                 name: todo-api-config
