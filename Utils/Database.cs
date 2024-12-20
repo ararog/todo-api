@@ -17,7 +17,6 @@ public class Database
     using (var connection = _context.CreateMasterConnection())
     {
       var records = connection.Query(query, parameters);
-      Console.WriteLine($"Linhas: {records.Count()}");
       if (!records.Any())
         connection.Execute($"CREATE DATABASE {dbName}");
     }
