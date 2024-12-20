@@ -48,7 +48,7 @@ builder.Services.AddLogging(c => c.AddFluentMigratorConsole())
         .ConfigureRunner(c => c.AddSqlServer2012()
             .WithGlobalConnectionString(
                 string.Format(
-                    builder.Configuration.GetSection("Database").GetValue<string>("ConnectionString"),
+                    builder.Configuration.GetSection("Database").GetValue<string>("MasterConnectionString"),
                     Environment.GetEnvironmentVariable("DB_HOST"),
                     Environment.GetEnvironmentVariable("DB_USER"),
                     Environment.GetEnvironmentVariable("DB_PASSWORD")

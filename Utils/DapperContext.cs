@@ -1,7 +1,7 @@
 namespace TodoApi.Utils;
 
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System.Data;
 
 public class DapperContext
@@ -12,7 +12,10 @@ public class DapperContext
     _configuration = configuration;
   }
   public IDbConnection CreateConnection()
-      => new SqlConnection(_configuration.GetConnectionString("SqlConnection"));
+      => new NpgsqlConnection(_configuration.GetSection("Database").GetValue<string>("ConnectionString"));
   public IDbConnection CreateMasterConnection()
-      => new SqlConnection(_configuration.GetConnectionString("MasterConnection"));
+      => new NpgsqlConnection(string.Format(_configuration.GetSection("Database").GetValue<string>("MasterConnectionString"),
+                    Environment.GetEnvironmentVariable("DB_HOST"),
+                    Environment.GetEnvironmentVariable("DB_USER"),
+                    Environment.GetEnvironmentVariable("DB_PASSWORD")));
 }
