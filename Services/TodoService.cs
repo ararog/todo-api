@@ -21,7 +21,8 @@ public class TodoService : IApiService<TodoItem>
        throw new NotImplementedException();
 
   public async Task<IEnumerable<TodoItem>> GetAll(int id) =>
-      await _connection.QueryAsync<TodoItem>("SELECT * FROM TodoItem WHERE userId = @userId", new { userId = id });
+      await _connection.QueryAsync<TodoItem>(
+        "SELECT * FROM TodoItem WHERE userId = @userId", new { userId = id });
 
   public async Task<TodoItem?> Get(string id)
   {
@@ -31,13 +32,24 @@ public class TodoService : IApiService<TodoItem>
 
   public async Task Create(TodoItem item)
   {
-    var sql = "INSERT INTO TodoItem (Text, Description) VALUES (@Text, @Description)";
+    var sql = @"INSERT INTO TodoItem (Title, Description, Completed) 
+      VALUES (@Title, @Description, @Completed)";
     await _connection.ExecuteAsync(sql, item);
   }
 
   public async Task Update(TodoItem item)
   {
-    var sql = "UPDATE TodoItem SET (Text = @Text, Description = @Description)  WHERE Id = @Id";
+    var sql = @"UPDATE TodoItem SET (
+      Title = @Title, 
+      Description = @Description, 
+      Completed = @Completed, 
+      CompletedAt = @CompletedAt
+    ) WHERE Id = @Id";
+
+    if (item.Completed)
+    {
+      item.CompletedAt = DateTime.Now;
+    }
     await _connection.ExecuteAsync(sql, item);
   }
 
