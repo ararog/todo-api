@@ -1,3 +1,5 @@
+using Dapper;
+
 namespace TodoApi.Utils;
 
 public class Database

@@ -4,11 +4,11 @@ public static class MigrationManager
     {
         using (var scope = host.Services.CreateScope())
         {
-            var databaseService = scope.ServiceProvider.GetRequiredService<Database>();
+            var databaseService = scope.ServiceProvider.GetRequiredService<TodoApi.Utils.Database>();
 
             try
             {
-                databaseService.CreateDatabase("DapperMigrationExample");
+                databaseService.CreateDatabase("Todo");
             }
             catch
             {

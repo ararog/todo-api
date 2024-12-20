@@ -1,4 +1,6 @@
 using System.Net;
+using System.Reflection;
+using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TodoApi.Models;
 
@@ -41,12 +43,17 @@ builder.Services.AddSingleton<TodoApi.Utils.DapperContext>();
 builder.Services.AddSingleton<TodoApi.Utils.Database>();
 builder.Services.AddSingleton<TodoApi.Services.UsersService>();
 builder.Services.AddSingleton<TodoApi.Services.TodoService>();
-
-builder.Services.AddSingleton<TodoApi.Services.TodoService>();
-    .AddLogging(c => c.AddFluentMigratorConsole())
+builder.Services.AddLogging(c => c.AddFluentMigratorConsole())
         .AddFluentMigratorCore()
         .ConfigureRunner(c => c.AddSqlServer2012()
-            .WithGlobalConnectionString(Configuration.GetConnectionString("SqlConnection"))
+            .WithGlobalConnectionString(
+                string.Format(
+                    builder.Configuration.GetSection("Database").GetValue<string>("ConnectionString"),
+                    Environment.GetEnvironmentVariable("DB_HOST"),
+                    Environment.GetEnvironmentVariable("DB_USER"),
+                    Environment.GetEnvironmentVariable("DB_PASSWORD")
+                )
+            )
             .ScanIn(Assembly.GetExecutingAssembly()).For.Migrations());
 
 var app = builder.Build();
