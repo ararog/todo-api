@@ -21,12 +21,12 @@ spec:
           - name: DB_URL
             valueFrom:
               configMapKeyRef:
-                name: config
+                name: todo-api-config
                 key: DB_HOST
           - name: DB_USER
             valueFrom:
               configMapKeyRef:
-                name: config
+                name: todo-api-config
                 key: DB_USER                
           - name: DB_PASSWORD
             valueFrom:
