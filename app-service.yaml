@@ -4,10 +4,6 @@ metadata:
   name: todo-api-svc
   labels:
     app: todo-api
-  annotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/path: '/data/metrics'
-    prometheus.io/port: '80'      
 spec:
   type: LoadBalancer
   ports:
