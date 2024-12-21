@@ -4,5 +4,5 @@ metadata:
   name: todo-api-config
   namespace: default
 data:
-  DB_HOST: "microblog-postgresql.default.svc.cluster.loc"
+  DB_HOST: "todo-postgresql.default.svc.cluster.local"
   DB_USER: "postgres"
