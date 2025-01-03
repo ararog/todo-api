@@ -10,3 +10,18 @@ spec:
   - port: 8080
   selector:
     app: todo-api
+
+---    
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-api-blue-svc
+  labels:
+    app: todo-api
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+  selector:
+    app: todo-api

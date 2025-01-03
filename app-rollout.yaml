@@ -25,5 +25,5 @@ spec:
     blueGreen: 
       activeService: todo-api-svc
       previewService: todo-api-blue-svc
-      autoPromotionEnabled: false
+      autoPromotionEnabled: true
       autoPromotionSeconds: 30
