@@ -46,8 +46,8 @@ pipeline {
         stage('Publish') {
             steps {
                 script {
-                    sh "docker tag ${env.BASE_IMAGE} registry.local:5000/${env.BASE_IMAGE}:${dockerImageTag}"
-                    sh "docker push registry.local:5000/${env.BASE_IMAGE}:${dockerImageTag}"
+                    sh "docker tag ${env.BASE_IMAGE} ${env.BASE_IMAGE}:${dockerImageTag}"
+                    sh "docker push ${env.BASE_IMAGE}:${dockerImageTag}"
                 }
             }
         }
