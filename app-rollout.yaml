@@ -31,7 +31,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: todo-api-secret
-                key: AUTH_SECRET                
+                key: DB_PASSWORD                
         ports:
         - containerPort: 80
   strategy:
