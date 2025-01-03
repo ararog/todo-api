@@ -21,7 +21,7 @@ spec:
             valueFrom: 
               configMapKeyRef:
                 name: todo-api-config
-                key: DATABASE_URL          
+                key: DB_HOST          
           - name: DB_USER
             valueFrom: 
               configMapKeyRef:
