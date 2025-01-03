@@ -4,7 +4,7 @@ def dockerImageTag = ""
 pipeline {
     agent any
     environment {
-        BASE_IMAGE = "training/todo-api" 
+        BASE_IMAGE = "registry.local:5000/training/todo-api" 
         CONTAINER = "todo-api-container" 
     }        
     stages {
