@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: todo-api-rollout
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: todo-api
+  template:
+    metadata:
+      labels:
+        app: todo-api
+    spec:
+      containers:
+      - name: todo-api-container
+        image: registry.local:5000/training/todo-api:latest
+        envFrom:
+          - configMapRef:
+              name: todo-api-config
+        ports:
+        - containerPort: 80
+  strategy:
+    blueGreen: 
+      activeService: todo-api-svc
+      previewService: todo-api-blue-svc
+      autoPromotionEnabled: false
+      autoPromotionSeconds: 30

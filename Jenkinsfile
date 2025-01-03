@@ -1,10 +1,19 @@
 //project CI/CD pipeline config
+def dockerImageTag = ""
+
 pipeline {
     agent any
     environment {
         BASE_IMAGE = "training/todo-api" 
     }        
     stages {
+        stage('Prepare') {
+          steps {
+            script {
+              dockerImageTag = sh (script: 'git log -1 --pretty=format:%h', returnStdout: true).trim()
+            }
+          }
+        }      
         stage('Lint') {
             steps {
                 script {
@@ -15,7 +24,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh "docker build -t ${env.BASE_IMAGE} --platform linux/amd64 --target builder ."
+                    sh "docker build -t ${env.BASE_IMAGE}:${dockerImageTag} --platform linux/amd64 --target builder ."
                 }
             }
         }
@@ -36,8 +45,8 @@ pipeline {
         stage('Publish') {
             steps {
                 script {
-                    sh "docker tag ${env.BASE_IMAGE} registry.local:5000/${env.BASE_IMAGE}"
-                    sh "docker push registry.local:5000/${env.BASE_IMAGE}"
+                    sh "docker tag ${env.BASE_IMAGE} registry.local:5000/${env.BASE_IMAGE}:${dockerImageTag}"
+                    sh "docker push registry.local:5000/${env.BASE_IMAGE}:${dockerImageTag}"
                 }
             }
         }
@@ -45,11 +54,13 @@ pipeline {
             steps {
                 withKubeConfig([credentialsId: 'minikube', serverUrl: 'https://192.168.49.2:8443']){
                     sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'  
-                    sh 'chmod u+x ./kubectl'                      
+                    sh 'chmod u+x ./kubectl'  
+                    sh 'curl -LO "https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64"'
+                    sh 'mv ./kubectl-argo-rollouts-linux-amd64 ./kubectl-argo-rollouts && chmod u+x ./kubectl-argo-rollouts'  
                     sh "./kubectl apply -f app-config.yaml -n default"
                     sh "./kubectl apply -f app-service.yaml -n default"
-                    sh "./kubectl apply -f app-deployment.yaml -n default"
-                    sh "./kubectl rollout restart deployment/todo-api-deployment"
+                    sh "./kubectl apply -f app-rollout.yaml -n default"
+                    sh "./kubectl argo rollouts set image todo-api-rollout ${env.BASE_IMAGE}:${dockerImageTag} -n default"
                 }
             }
         }        
