@@ -13,25 +13,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
      .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
      {
-         c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
-         c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-         {
-             ValidAudience = builder.Configuration["Auth0:Audience"],
-             ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}",
-             RoleClaimType = $"{builder.Configuration["Auth0:TokenNamespace"]}claims/roles"
-         };
+       c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+       c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+       {
+         ValidAudience = builder.Configuration["Auth0:Audience"],
+         ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}",
+         RoleClaimType = $"{builder.Configuration["Auth0:TokenNamespace"]}claims/roles"
+       };
      });
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("User", policy => policy.RequireClaim("User"));
-    options.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
+  options.AddPolicy("User", policy => policy.RequireClaim("User"));
+  options.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
 });
 
 builder.Configuration.AddEnvironmentVariables();
@@ -58,14 +59,19 @@ builder.Services.AddLogging(c => c.AddFluentMigratorConsole())
 
 var app = builder.Build();
 
+app.MigrateDatabase();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-app.MigrateDatabase();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();
