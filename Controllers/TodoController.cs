@@ -2,11 +2,13 @@ using System.Net.Mime;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using UsersService.Models;
 
 namespace TodoApi.Controllers;
 
 [ApiController]
+[EnableRateLimiting("sliding")]
 [Route("api/[controller]")]
 public class TodoController : ControllerBase
 {

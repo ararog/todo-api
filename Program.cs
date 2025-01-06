@@ -4,9 +4,14 @@ using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using TodoApi.Models;
+using UsersService.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddEnvironmentVariables();
 
 // builder.WebHost.ConfigureKestrel((context, serverOptions) =>
 // {
@@ -49,7 +54,19 @@ builder.Services.AddCors(options =>
                     });
 });
 
-builder.Configuration.AddEnvironmentVariables();
+var myOptions = new MyRateLimitOptions();
+builder.Configuration.GetSection(MyRateLimitOptions.MyRateLimit).Bind(myOptions);
+var slidingPolicy = "sliding";
+
+builder.Services.AddRateLimiter(_ => _
+    .AddSlidingWindowLimiter(policyName: slidingPolicy, options =>
+    {
+      options.PermitLimit = myOptions.PermitLimit;
+      options.Window = TimeSpan.FromSeconds(myOptions.Window);
+      options.SegmentsPerWindow = myOptions.SegmentsPerWindow;
+      options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+      options.QueueLimit = myOptions.QueueLimit;
+    }));
 
 builder.Services.Configure<DatabaseSettings>(
     builder.Configuration.GetSection("Database"));
@@ -82,11 +99,10 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
+app.UseRateLimiter();
 app.UseCors("AllowOrigins");
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
