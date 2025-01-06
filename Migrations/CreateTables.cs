@@ -5,25 +5,18 @@ public class CreateUserTable : Migration
 {
   public override void Up()
   {
-    Create.Table("User")
-      .WithColumn("Id").AsInt32().NotNullable().PrimaryKey().Identity()
-      .WithColumn("Email").AsString(255).NotNullable()
-      .WithColumn("Password").AsString(255).NotNullable()
-      .WithColumn("Auth0Id").AsString(10).NotNullable()
-      .WithColumn("PermissionLevel").AsString(20).NotNullable();
-
-    Create.Table("TodoItem")
-      .WithColumn("Id").AsInt32().NotNullable().PrimaryKey().Identity()
-      .WithColumn("Title").AsString(255).NotNullable()
-      .WithColumn("Description").AsString(1000).NotNullable()
-      .WithColumn("Completed").AsBoolean().Nullable()
-      .WithColumn("CreatedAt").AsDateTime().WithDefaultValue(DateTime.Now)
-      .WithColumn("CompletedAt").AsDateTime().Nullable();
+    Create.Table("todoitem")
+      .WithColumn("id").AsInt32().NotNullable().PrimaryKey().Identity()
+      .WithColumn("title").AsString(255).NotNullable()
+      .WithColumn("description").AsString(1000).NotNullable()
+      .WithColumn("completed").AsBoolean().Nullable()
+      .WithColumn("createdat").AsDateTime().WithDefaultValue(DateTime.Now)
+      .WithColumn("completedat").AsDateTime().Nullable()
+      .WithColumn("userid").AsString(50).NotNullable();
   }
 
   public override void Down()
   {
-    Delete.Table("TodoItem");
-    Delete.Table("User");
+    Delete.Table("todoitem");
   }
 }

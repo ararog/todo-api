@@ -20,30 +20,30 @@ public class TodoService : IApiService<TodoItem>
   public Task<IEnumerable<TodoItem>> GetAll() =>
        throw new NotImplementedException();
 
-  public async Task<IEnumerable<TodoItem>> GetAll(int id) =>
+  public async Task<IEnumerable<TodoItem>> GetByUserId(string id) =>
       await _connection.QueryAsync<TodoItem>(
-        "SELECT * FROM TodoItem WHERE userId = @userId", new { userId = id });
+        "SELECT * FROM todoitem WHERE userid = @userid", new { userId = id });
 
-  public async Task<TodoItem?> Get(string id)
+  public async Task<TodoItem?> Get(int id)
   {
-    var sql = "SELECT * FROM TodoItem WHERE todoItemId = @userId";
-    return await _connection.QueryFirstOrDefaultAsync(sql, new { userId = id });
+    var sql = "SELECT * FROM todoitem WHERE id = @Id";
+    return await _connection.QueryFirstOrDefaultAsync(sql, new { Id = id });
   }
 
   public async Task Create(TodoItem item)
   {
-    var sql = @"INSERT INTO TodoItem (Title, Description, Completed) 
+    var sql = @"INSERT INTO todoitem (title, description, completed) 
       VALUES (@Title, @Description, @Completed)";
     await _connection.ExecuteAsync(sql, item);
   }
 
   public async Task Update(TodoItem item)
   {
-    var sql = @"UPDATE TodoItem SET (
-      Title = @Title, 
-      Description = @Description, 
-      Completed = @Completed, 
-      CompletedAt = @CompletedAt
+    var sql = @"UPDATE todoitem SET (
+      title = @Title, 
+      description = @Description, 
+      completed = @Completed, 
+      completedat = @CompletedAt
     ) WHERE Id = @Id";
 
     if (item.Completed)
@@ -53,9 +53,9 @@ public class TodoService : IApiService<TodoItem>
     await _connection.ExecuteAsync(sql, item);
   }
 
-  public async Task Remove(string id)
+  public async Task Remove(int id)
   {
-    var sql = "DELETE FROM TodoItem WHERE Id = @Id";
+    var sql = "DELETE FROM todoitem WHERE id = @Id";
     await _connection.ExecuteAsync(sql, new { ID = id });
   }
 }

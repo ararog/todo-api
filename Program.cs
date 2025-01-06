@@ -1,7 +1,9 @@
-using System.Net;
 using System.Reflection;
+using System.Text;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using TodoApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,21 +20,33 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
      {
-       c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
-       c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+       options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+       options.Audience = builder.Configuration["Auth0:Audience"];
+       options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
        {
          ValidAudience = builder.Configuration["Auth0:Audience"],
          ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}",
-         RoleClaimType = $"{builder.Configuration["Auth0:TokenNamespace"]}claims/roles"
+         RoleClaimType = $"{builder.Configuration["Auth0:TokenNamespace"]}claims/roles",
+         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("PbnX6fqF8fZTUNPVcfG09K95gOfFH3sC"))
        };
      });
 
-builder.Services.AddAuthorization(options =>
+builder.Services
+    .AddAuthorization(options =>
+    {
+      options.AddPolicy("User", policy => policy.RequireClaim("User"));
+      options.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
+    });
+
+builder.Services.AddCors(options =>
 {
-  options.AddPolicy("User", policy => policy.RequireClaim("User"));
-  options.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
+  options.AddPolicy(name: "AllowOrigins",
+                    policy =>
+                    {
+                      policy.WithOrigins(["https://localhost:7138", "http://localhost:3000"]).AllowAnyHeader().AllowAnyMethod();
+                    });
 });
 
 builder.Configuration.AddEnvironmentVariables();
@@ -40,9 +54,9 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.Configure<DatabaseSettings>(
     builder.Configuration.GetSection("Database"));
 
+builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 builder.Services.AddSingleton<TodoApi.Utils.DapperContext>();
 builder.Services.AddSingleton<TodoApi.Utils.Database>();
-builder.Services.AddSingleton<TodoApi.Services.UsersService>();
 builder.Services.AddSingleton<TodoApi.Services.TodoService>();
 builder.Services.AddLogging(c => c.AddFluentMigratorConsole())
         .AddFluentMigratorCore()
@@ -68,8 +82,9 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("AllowOrigins");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

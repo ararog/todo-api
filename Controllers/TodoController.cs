@@ -10,10 +10,10 @@ namespace TodoApi.Controllers;
 [Route("api/[controller]")]
 public class TodoController : ControllerBase
 {
-  private readonly ILogger<UsersController> _logger;
+  private readonly ILogger<TodoController> _logger;
   private readonly Services.TodoService _todoService;
 
-  public TodoController(ILogger<UsersController> logger, Services.TodoService todoService)
+  public TodoController(ILogger<TodoController> logger, Services.TodoService todoService)
   {
     _logger = logger;
     _todoService = todoService;
@@ -24,9 +24,9 @@ public class TodoController : ControllerBase
   [ProducesResponseType(StatusCodes.Status200OK)]
   public async Task<IEnumerable<TodoItem>> GetTodo()
   {
-    int id = int.Parse(ClaimTypes.NameIdentifier);
+    string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
     _logger.LogDebug("Loading todo item");
-    return await _todoService.GetAll(id);
+    return await _todoService.GetByUserId(id);
   }
 
   [Authorize(Roles = "Admin,User")]
@@ -38,7 +38,7 @@ public class TodoController : ControllerBase
   {
     string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     _logger.LogDebug($"Loading todo item of id {id}");
-    var savedItem = await _todoService.Get(id);
+    var savedItem = await _todoService.Get(int.Parse(id));
     if (savedItem == null)
     {
       Response.StatusCode = StatusCodes.Status404NotFound;
@@ -80,7 +80,7 @@ public class TodoController : ControllerBase
   public async Task<IActionResult> Update(string id, [FromBody] TodoItem item)
   {
     string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var savedItem = await _todoService.Get(id);
+    var savedItem = await _todoService.Get(int.Parse(id));
     if (savedItem == null)
     {
       return NotFound();
@@ -105,7 +105,7 @@ public class TodoController : ControllerBase
   public async Task<IActionResult> Delete(string id)
   {
     string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var savedItem = await _todoService.Get(id);
+    var savedItem = await _todoService.Get(int.Parse(id));
     if (savedItem == null)
     {
       return NotFound();
@@ -116,7 +116,7 @@ public class TodoController : ControllerBase
     }
 
     _logger.LogDebug($"Deleting user of id {id}");
-    await _todoService.Remove(id);
+    await _todoService.Remove(int.Parse(id));
     return NoContent();
   }
 }

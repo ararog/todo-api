@@ -4,13 +4,11 @@ public interface IApiService<T>
 {
   Task<IEnumerable<T>> GetAll();
 
-  Task<IEnumerable<T>> GetAll(int id);
-
-  Task<T?> Get(string id);
+  Task<T?> Get(int id);
 
   Task Create(T item);
 
   Task Update(T item);
 
-  Task Remove(string id);
+  Task Remove(int id);
 }
