@@ -58,11 +58,7 @@ pipeline {
                     sh 'chmod u+x ./kubectl'  
                     sh 'curl -LO "https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64"'
                     sh 'mv ./kubectl-argo-rollouts-linux-amd64 ./kubectl-argo-rollouts && chmod u+x ./kubectl-argo-rollouts'  
-                    sh "./kubectl apply -f app-config.yaml -n default"
-                    sh "./kubectl apply -f app-service.yaml -n default"
-                    sh "./kubectl apply -f app-secrets.yaml -n default"
-                    sh "./kubectl apply -f app-scaler.yaml -n default"
-                    sh "./kubectl apply -f app-rollout.yaml -n default"
+                    //sh "./kubectl apply -f deploy/k8s -n default"
                     sh "PATH=. ./kubectl argo rollouts set image todo-api-rollout ${env.CONTAINER}=${env.BASE_IMAGE}:${dockerImageTag} -n default"
                 }
             }
