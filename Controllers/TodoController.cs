@@ -62,12 +62,9 @@ public class TodoController : ControllerBase
   [ProducesResponseType(StatusCodes.Status403Forbidden)]
   public async Task<IActionResult> Create([FromBody] TodoItem item)
   {
-    string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    if (item.UserId != userId)
-    {
-      return Forbid();
-    }
     _logger.LogDebug("Creating todo item");
+    string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    item.UserId = userId;
     await _todoService.Create(item);
     return Ok();
   }
@@ -87,12 +84,13 @@ public class TodoController : ControllerBase
     {
       return NotFound();
     }
-    if (savedItem?.UserId == userId)
+    if (savedItem?.UserId != userId)
     {
       return Forbid();
     }
 
-    _logger.LogDebug($"Updating todo item of id {id}");
+    item.Id = savedItem?.Id;
+    _logger.LogDebug($"Updating todo item of id {id} and values ({item.Description}, {item.Completed}, {item.Id})");
     await _todoService.Update(item);
     return NoContent();
   }

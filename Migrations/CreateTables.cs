@@ -7,7 +7,7 @@ public class CreateUserTable : Migration
   {
     Create.Table("todoitem")
       .WithColumn("id").AsInt32().NotNullable().PrimaryKey().Identity()
-      .WithColumn("title").AsString(255).NotNullable()
+      .WithColumn("title").AsString(255).Nullable()
       .WithColumn("description").AsString(1000).NotNullable()
       .WithColumn("completed").AsBoolean().Nullable()
       .WithColumn("createdat").AsDateTime().WithDefaultValue(DateTime.Now)

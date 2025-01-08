@@ -9,22 +9,24 @@ using System.Threading.RateLimiting;
 using TodoApi.Models;
 using UsersService.Models;
 using OpenTelemetry.Metrics;
+using Npgsql;
+using TodoApi.Controllers;
+
+var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+NpgsqlLoggingConfiguration.InitializeLogging(loggerFactory);
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
 
-// builder.WebHost.ConfigureKestrel((context, serverOptions) =>
-// {
-//     serverOptions.Listen(IPAddress.Any, 80);
-// });
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddOpenTelemetry()
     .WithMetrics(builder =>
     {
@@ -39,6 +41,7 @@ builder.Services.AddOpenTelemetry()
                        0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10 }
           });
     });
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
      .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
      {
@@ -107,7 +110,7 @@ var app = builder.Build();
 
 app.MigrateDatabase();
 app.MapPrometheusScrapingEndpoint();
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger();
