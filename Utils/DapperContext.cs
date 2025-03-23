@@ -14,11 +14,13 @@ public class DapperContext
   public IDbConnection CreateConnection()
       => new NpgsqlConnection(string.Format(_configuration.GetSection("Database").GetValue<string>("ConnectionString"),
                     Environment.GetEnvironmentVariable("DB_HOST"),
+                    Environment.GetEnvironmentVariable("DB_PORT"),
                     Environment.GetEnvironmentVariable("DB_USER"),
                     Environment.GetEnvironmentVariable("DB_PASSWORD")));
   public IDbConnection CreateMasterConnection()
       => new NpgsqlConnection(string.Format(_configuration.GetSection("Database").GetValue<string>("MasterConnectionString"),
                     Environment.GetEnvironmentVariable("DB_HOST"),
+                    Environment.GetEnvironmentVariable("DB_PORT"),
                     Environment.GetEnvironmentVariable("DB_USER"),
                     Environment.GetEnvironmentVariable("DB_PASSWORD")));
 }

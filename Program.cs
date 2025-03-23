@@ -68,7 +68,13 @@ builder.Services.AddCors(options =>
   options.AddPolicy(name: "AllowOrigins",
                     policy =>
                     {
-                      policy.WithOrigins(["https://localhost:7138", "http://localhost:3000"]).AllowAnyHeader().AllowAnyMethod();
+                      policy.WithOrigins([
+                        "https://localhost:7138", 
+                        "http://localhost:3000",
+                        "http://localhost:4566",
+                        "http://127.0.0.1:4566",
+                        "http://training-todo-dev-web-lb.elb.localhost.localstack.cloud:4566"
+                      ]).AllowAnyHeader().AllowAnyMethod();
                     });
 });
 
@@ -100,6 +106,7 @@ builder.Services.AddLogging(c => c.AddFluentMigratorConsole())
                 string.Format(
                     builder.Configuration.GetSection("Database").GetValue<string>("MasterConnectionString"),
                     Environment.GetEnvironmentVariable("DB_HOST"),
+                    Environment.GetEnvironmentVariable("DB_PORT"),
                     Environment.GetEnvironmentVariable("DB_USER"),
                     Environment.GetEnvironmentVariable("DB_PASSWORD")
                 )
